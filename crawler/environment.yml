@@ -1,0 +1,10 @@
+name: hacked-2019
+channels:
+  - anaconda
+dependencies:
+  - python=3.6
+  - selenium
+  - feedparser
+  - requests
+  - tqdm
+

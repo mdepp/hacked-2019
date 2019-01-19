@@ -31,9 +31,15 @@ def get_lat_lon(place_name: str) -> Tuple[float, float]:
     response = requests.get(f'https://nominatim.openstreetmap.org/search?q={place_name}&format=json&polygon=0').json()[0]
     return float(response['lat']), float(response['lon'])
 
+class LocationFormatException(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)
 
 def get_location(body_text: str) -> str:
-    return re.search('([a-zA-Z0-9., ]+)[–—―]', body_text).group(1).strip().title()
+    match = re.match('([a-zA-Z0-9., ]+)[–—―]', body_text)
+    if match is None:
+        raise LocationFormatException('Could not find location in text')
+    return match.group(1).strip().title()
 
 
 if __name__ == '__main__':
@@ -65,7 +71,7 @@ if __name__ == '__main__':
 
                 print(f'Reading from {entry.link}')
                 try:
-                    text_by_url[entry.link] = get_content_text(entry.link)
+                    text_by_url[entry.link] = {'content': get_content_text(entry.link)}
                     json.dump(text_by_url, open(cache_file, 'w'))
                 except InvalidArticleException:
                     print('Parsing error: invalid article format')
