@@ -106,3 +106,11 @@ venv.bak/
 crawler/\.idea/
 
 server/\.idea/
+
+frontend/\.vs/ProjectSettings\.json
+
+frontend/\.vs/slnx\.sqlite
+
+frontend/\.vs/VSWorkspaceState\.json
+
+frontend/\.vs/frontend/v16/\.suo

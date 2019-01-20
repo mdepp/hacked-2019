@@ -35,7 +35,7 @@ def get_place_names(text, *, use_countries=True, use_cities=True):
     places = set()
     for entity in entities:
         if (use_countries and entity.lower() in countries) or (use_cities and entity.lower() in cities):
-            places.add(entity)
+            places.add(entity.title())
 
     return places
 
