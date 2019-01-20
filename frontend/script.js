@@ -29,6 +29,8 @@ http.onreadystatechange=(e)=>{
         let data = response[key];
         stories.push(data);
         stories[stories.length-1].url = key;
+        stories[stories.length-1].lat = stories[stories.length-1].spidered_lat;
+        stories[stories.length-1].lon = stories[stories.length-1].spidered_lon;
     }
     refreshMarkersAndInfo();
 }
