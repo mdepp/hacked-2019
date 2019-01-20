@@ -6,7 +6,7 @@ var highlight_marker = null;
 
 var highlightInfoWindow;
 
-var prevPosition;
+var prevPosition = null;
 var prevZoom = null;
 
 var popup;
@@ -58,9 +58,9 @@ function refreshMarkersAndInfo() {
         })
         markers[i].addListener('click', function() {
             showStory(markers[i], stories[i]);
-            markers[i].setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(function() {markers[i].setAnimation(null)}, 1);
             updateArticleSelectedMarker(markers[i]);
+            markers[i].setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {markers[i].setAnimation(null)}, 100);
         });
     }
 }
@@ -86,7 +86,7 @@ function showStory(marker, story) {
     for (let lnk of document.getElementsByClassName('pos-link')) {
         let place_entry = 0;
         for (let obj of story.referenced_places) {
-            if (obj.name.toUpperCase() == lnk.innerHTML.toUpperCase()) {
+            if (obj.name.toUpperCase() == lnk.innerHTML.toUpperCase().trim()) {
                 place_entry = obj;
                 break;
             }
@@ -94,7 +94,7 @@ function showStory(marker, story) {
         lnk.addEventListener('mouseover', function() { highlightCoordinates(place_entry.lat, place_entry.lon, place_entry.name); });
         lnk.addEventListener('mousedown', function() { zoomTo(place_entry.lat, place_entry.lon); });
         lnk.addEventListener('mouseup', resetZoom);
-        lnk.addEventListener('mouseout', function() { removeHighlight(); if (prevZoom !== null) resetZoom() });
+        lnk.addEventListener('mouseout', function() { removeHighlight(); resetZoom() });
     }
 }
 
@@ -128,7 +128,10 @@ function movePosition(lat, lon) {
     map.panTo({lat: lat, lng: lon});
 }
 function resetPosition() {
-    map.panTo(prevPosition);
+    if (prevPosition !== null) {
+        map.panTo(prevPosition);
+        prevPosition = null;
+    }
 }
 function zoomTo(lat, lon) {
     prevZoom = map.getZoom();

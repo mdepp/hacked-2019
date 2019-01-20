@@ -14,6 +14,10 @@ profile = webdriver.FirefoxProfile()
 profile.set_preference('network.cookie.cookieBehavior', 2)
 driver = webdriver.Firefox(options=options, firefox_profile=profile)
 
+content_cache_file = 'content_cache.json'
+blacklist_file = 'blacklisted_urls.json'
+lat_lon_cache_file = 'lat_lon_cache.json'
+
 
 class InvalidArticleException(Exception):
     def __init__(self, *args):
@@ -27,6 +31,7 @@ def get_content_text(url: str) -> str:
     except NoSuchElementException:
         raise InvalidArticleException(f'Unable to read article at url={url}: no articleBody element!')
 
+
 def get_content_html(url: str) -> str:
     driver.get(url)
     try:
@@ -39,9 +44,11 @@ def get_lat_lon(place_name: str) -> Tuple[float, float]:
     response = requests.get(f'https://nominatim.openstreetmap.org/search?q={place_name}&format=json&polygon=0').json()[0]
     return float(response['lat']), float(response['lon'])
 
+
 class LocationFormatException(Exception):
     def __init__(self, *args):
         super().__init__(*args)
+
 
 def get_location(body_text: str) -> str:
     match = re.match('([a-zA-Z0-9., ]+)[–—―]', body_text)
@@ -53,11 +60,8 @@ def get_location(body_text: str) -> str:
 if __name__ == '__main__':
     start_time = time()
 
-    cache_file = 'content_by_url.json'
-    blacklist_file = 'blacklisted_urls.json'
-
     try:
-        text_by_url = json.load(open(cache_file))
+        text_by_url = json.load(open(content_cache_file))
     except FileNotFoundError:
         text_by_url = {}
 
@@ -85,7 +89,7 @@ if __name__ == '__main__':
                         'headline': entry.title,
                         'blurb': entry.description,
                     }
-                    json.dump(text_by_url, open(cache_file, 'w'))
+                    json.dump(text_by_url, open(content_cache_file, 'w'))
                 except InvalidArticleException:
                     tqdm.write('Parsing error: invalid article format')
                     blacklist.append(entry.link)
