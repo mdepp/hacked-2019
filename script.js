@@ -5,6 +5,9 @@ fetch("data.json")
   .then(response => response.json())
   .then(json => {
       console.log(json);
+      let parsed = JSON.parse(json);
+      stories = parsed.stories;
+      story_groups = parsed.story_groups;
       refreshMarkersAndInfo();
   });
 
