@@ -13,3 +13,4 @@ dependencies:
   - flask-cors
   - nltk
   - pandas
+  - beautifulsoup4
