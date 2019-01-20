@@ -104,7 +104,7 @@ function showInfoWindow(index) {
         let story = stories[url];
         content += 
         `<div class="card" onclick="storyBtnPressed(${index}, '${url}')">
-            <div class="card-title"><h4>${story.location_string} -- ${story.headline}</h4></div>
+            <div class="card-title"><h4>${story.location_string} — ${story.headline}</h4></div>
             <div class="card-text"><p>${story.blurb}</p></div>
         </div>`;
     }
