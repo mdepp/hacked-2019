@@ -18,7 +18,7 @@ var articleSelectedIconColour = 'FFD700';
 markerImages = {};
 
 const http = new XMLHttpRequest();
-const api_url = 'https://mdepp/github.io/posts/data.json';
+const api_url = 'http://mdepp.github.io/hacked-2019/posts/data.json';
 http.open('GET', api_url);
 http.send();
 http.onreadystatechange=(e)=>{
@@ -29,6 +29,7 @@ http.onreadystatechange=(e)=>{
     story_groups = response.story_groups;
     refreshMarkersAndInfo();
 }
+
 
 function refreshMarkersAndInfo() {
     // Delete existing markers
