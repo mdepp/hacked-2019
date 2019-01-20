@@ -1,5 +1,22 @@
 var stories = {};
 var story_groups = [];
+
+$(document).ready(function() {
+    require(['data.json'], function(data) {
+        console.log('Loading data');
+
+        data = JSON.parse(json);
+        stories = data.stories;
+        story_groups = data.story_groups;
+        
+        stories = JSON.parse(stories);
+        story_groups = JSON.parse(story_groups);
+
+        console.log('Loaded data');
+    });
+});
+
+
 var map;
 var infoWindow;
 var markers = null;
@@ -17,7 +34,7 @@ var articleSelectedIconColour = 'FFD700';
 
 markerImages = {};
 
-const http = new XMLHttpRequest();
+/*const http = new XMLHttpRequest();
 const api_url = 'https://mdepp/github.io/posts/data.json';
 http.open('GET', api_url);
 http.send();
@@ -28,7 +45,7 @@ http.onreadystatechange=(e)=>{
     stories = response.stories;
     story_groups = response.story_groups;
     refreshMarkersAndInfo();
-}
+}*/
 
 function refreshMarkersAndInfo() {
     // Delete existing markers
