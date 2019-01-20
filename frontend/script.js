@@ -19,6 +19,7 @@ http.onreadystatechange=(e)=>{
         if (!response.hasOwnProperty(key)) continue;
         let data = response[key];
         stories.push(data);
+        stories[stories.length-1].url = key;
     }
     refreshMarkersAndInfo();
 }
@@ -59,7 +60,7 @@ function showStory(story) {
     text_div.style.display = 'block';
 
     text_div.innerText = story.content;
-    text_div.innerHTML = `<h4>${story.headline}</h4>` + text_div.innerHTML;
+    text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>` + text_div.innerHTML;
 
     let tags_div = document.getElementById('sidebar-tags');
     tags_str = '';

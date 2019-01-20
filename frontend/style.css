@@ -75,6 +75,10 @@ html, body {
     display: none;
 }
 
+#sidebar-text h4 a {
+    color: black;
+}
+
 #map h4 {
     font-size: 14px;
 }
