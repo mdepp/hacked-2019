@@ -114,3 +114,5 @@ frontend/\.vs/slnx\.sqlite
 frontend/\.vs/VSWorkspaceState\.json
 
 frontend/\.vs/frontend/v16/\.suo
+
+\.vs/
