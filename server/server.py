@@ -1,7 +1,7 @@
 import json
 from flask_restful import Resource, Api, reqparse
 from flask import Flask
-
+from flask_cors import CORS
 
 class AllStoriesResource(Resource):
     def get(self):
@@ -11,6 +11,7 @@ class AllStoriesResource(Resource):
 
 def main():
     app = Flask(__name__)
+    CORS(app)
     api = Api(app)
 
     api.add_resource(AllStoriesResource, '/all/')

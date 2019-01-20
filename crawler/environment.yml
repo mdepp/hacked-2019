@@ -10,3 +10,4 @@ dependencies:
   - tqdm
   - flask
   - flask-restful
+  - flask-cors
