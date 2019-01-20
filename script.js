@@ -5,7 +5,7 @@ fetch("data.json")
   .then(response => response.json())
   .then(json => {
       console.log(json);
-      initMap();
+      refreshMarkersAndInfo();
   });
 
 
@@ -191,8 +191,8 @@ function getMarkerImage(colour, count) {
 
 var count = 0;
 function initMap() {
-    if (++count < 2) return;
-    
+    //if (++count < 2) return;
+
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 31.7917, lng: 7.0926},
         zoom: 2
