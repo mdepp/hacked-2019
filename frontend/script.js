@@ -119,16 +119,16 @@ function hideInfoWindow() {
 }
 
 function highlightCoordinates(lat, lon, label) {
-    highlight_marker.setPosition({lat: lat, lng: lon});
-    highlight_marker.setMap(map);
-    highlightInfoWindow.setContent(label);
-    highlightInfoWindow.open(map, highlight_marker);
+    //highlight_marker.setPosition({lat: lat, lng: lon});
+    //highlight_marker.setMap(map);
+    //highlightInfoWindow.setContent(label);
+    //highlightInfoWindow.open(map, highlight_marker);
     movePosition(lat, lon, 3);
 }
 
 function removeHighlight() {
-    highlight_marker.setMap(null);
-    highlightInfoWindow.close();
+    //highlight_marker.setMap(null);
+    //highlightInfoWindow.close();
     resetPosition();
 }
 
