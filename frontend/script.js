@@ -7,7 +7,7 @@ var highlight_marker = null;
 var highlightInfoWindow;
 
 var prevPosition;
-var prevZoom;
+var prevZoom = null;
 
 var popup;
 
@@ -52,12 +52,14 @@ function refreshMarkersAndInfo() {
             hideInfoWindow(infoWindow);
         })
         markers[i].addListener('click', function() {
-            showStory(stories[i]);
+            showStory(markers[i], stories[i]);
+            markers[i].setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {markers[i].setAnimation(null)}, 1);
         });
     }
 }
 
-function showStory(story) {
+function showStory(marker, story) {
     let default_text_div = document.getElementById('default-sidebar-text');
     let text_div = document.getElementById('sidebar-text');
     
@@ -67,27 +69,27 @@ function showStory(story) {
     text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>${story.html}`;
     text_div.scrollIntoView();
 
-    // text_div.innerText = story.content;
-    // text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>` + text_div.innerHTML;
-
-    for (let lnk of document.getElementsByClassName('pos-link')) {
-        lnk.addEventListener('mouseover', function() {
-            for (let obj of story.referenced_places) {
-                if (obj.name.toUpperCase() == lnk.innerHTML.toUpperCase()) {
-                    highlightCoordinates(obj.lat, obj.lon, obj.name);
-                    break;
-                }
-            }
-        });
-        lnk.addEventListener('mouseout', removeHighlight);
-    }
-
     let tags_div = document.getElementById('sidebar-tags');
     let tags_str = '';
     for (let obj of story.referenced_places) {
-        tags_str += `<button class="btn btn-default btn-xs" onmouseover="highlightCoordinates(${obj.lat}, ${obj.lon}, '${obj.name}')" onmouseout="removeHighlight();">${obj.name}</button>`;
+        //tags_str += `<button class="btn btn-default btn-xs" onmouseover="highlightCoordinates(${obj.lat}, ${obj.lon}, '${obj.name}')" onmouseout="removeHighlight();">${obj.name}</button>`;
+        tags_str += `<button class="btn btn-default btn-xs pos-link">${obj.name}</button>`;
     }
     tags_div.innerHTML = tags_str;
+
+    for (let lnk of document.getElementsByClassName('pos-link')) {
+        let place_entry = 0;
+        for (let obj of story.referenced_places) {
+            if (obj.name.toUpperCase() == lnk.innerHTML.toUpperCase()) {
+                place_entry = obj;
+                break;
+            }
+        }
+        lnk.addEventListener('mouseover', function() { highlightCoordinates(place_entry.lat, place_entry.lon, place_entry.name); });
+        lnk.addEventListener('mousedown', function() { zoomTo(place_entry.lat, place_entry.lon); });
+        lnk.addEventListener('mouseup', resetZoom);
+        lnk.addEventListener('mouseout', function() { removeHighlight(); if (prevZoom !== null) resetZoom() });
+    }
 }
 
 function showInfoWindow(marker, story, info) {
@@ -122,7 +124,16 @@ function movePosition(lat, lon) {
 function resetPosition() {
     map.panTo(prevPosition);
 }
-
+function zoomTo(lat, lon) {
+    prevZoom = map.getZoom();
+    map.setZoom(5);
+}
+function resetZoom() {
+    if (prevZoom !== null) {
+        map.setZoom(prevZoom);
+        prevZoom = null;
+    }
+}
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -138,10 +149,4 @@ function initMap() {
     highlight_marker = new google.maps.Marker({
         icon: 'libraries/markerclusterer/m1.png',
     });
-
-    definePopupClass();
-    popup = new Popup(
-        new google.maps.LatLng(-33.866, 151.196),
-        document.getElementById('popup-content'));
-    popup.setMap(map);
 }
