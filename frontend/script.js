@@ -1,4 +1,5 @@
-var stories = []
+var stories = {};
+var story_groups = [];
 var map;
 var infoWindow;
 var markers = null;
@@ -9,9 +10,12 @@ var highlightInfoWindow;
 var prevPosition = null;
 var prevZoom = null;
 
-var defaultIcon = null;
-var articleSelectedIcon = null;
 var articleSelectedMarker = null;
+var articleSelectedStoryGroup = null;
+var defaultIconColour = 'FF6347';
+var articleSelectedIconColour = 'FFD700';
+
+markerImages = {};
 
 const http = new XMLHttpRequest();
 const api_url = 'http://localhost:5000/all/';
@@ -20,16 +24,9 @@ http.send();
 http.onreadystatechange=(e)=>{
     if (http.readyState != 4 || http.status != 200) return;
     console.log('Fetched data.');
-    stories = []
     let response = JSON.parse(http.responseText);
-    for (let key in response) {
-        if (!response.hasOwnProperty(key)) continue;
-        let data = response[key];
-        stories.push(data);
-        stories[stories.length-1].url = key;
-        stories[stories.length-1].lat = stories[stories.length-1].spidered_lat;
-        stories[stories.length-1].lon = stories[stories.length-1].spidered_lon;
-    }
+    stories = response.stories;
+    story_groups = response.story_groups;
     refreshMarkersAndInfo();
 }
 
@@ -40,18 +37,18 @@ function refreshMarkersAndInfo() {
             marker.setMap(null);
         }
     }
-    // Add markers for each story
-    markers = stories.map(function(story, i) {
+    // Add markers for each story group
+    markers = story_groups.map(function(story_group, i) {
         return new google.maps.Marker({
-            position: {lat: story.lat, lng: story.lon},
+            position: {lat: story_group.lat, lng: story_group.lon},
             map: map,
-            icon: defaultIcon
+            icon: getMarkerImage(defaultIconColour, story_group.urls.length)
         });
     });
     // Add event listeners to open info windows
-    for (let i=0; i < stories.length; i++) {
+    for (let i=0; i < story_groups.length; i++) {
         markers[i].addListener('click', function() {
-            showInfoWindow(i, [0, 1, 2, 3, 4]);
+            showInfoWindow(i);
         });
     }
 }
@@ -89,30 +86,31 @@ function showStory(marker, story) {
     }
 }
 
-function storyBtnPressed(marker_index, story_index) {
-    let story = stories[story_index];
+function storyBtnPressed(marker_index, story_url) {
+    let story = stories[story_url];
     let marker = markers[marker_index];
+    let story_group = story_groups[marker_index];
     showStory(marker, story);
-    updateArticleSelectedMarker(marker);
+    updateArticleSelectedMarker(marker, story_group);
     marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function() {marker.setAnimation(null)}, 100);
+    setTimeout(function() {marker.setAnimation(null);}, 100);
     hideInfoWindow();
 }
 
-function showInfoWindow(marker_index, story_indices) {
+function showInfoWindow(index) {
     infoWindowOpen = true;
     content = `<div id="info-window-content">`;
-    for (let i of story_indices) {
+    for (let url of story_groups[index].urls) {
+        let story = stories[url];
         content += 
-        `<div class="card" onclick="storyBtnPressed(${marker_index}, ${i})">
-            <div class="card-title"><h4>${stories[i].location_string} -- ${stories[i].headline}</h4></div>
-            <div class="card-text"><p>${stories[i].blurb}</p></div>
+        `<div class="card" onclick="storyBtnPressed(${index}, '${url}')">
+            <div class="card-title"><h4>${story.location_string} -- ${story.headline}</h4></div>
+            <div class="card-text"><p>${story.blurb}</p></div>
         </div>`;
     }
     content += `</div>`;
-    console.log(content);
     infoWindow.setContent(content);
-    infoWindow.open(map, markers[marker_index]);
+    infoWindow.open(map, markers[index]);
 }
 
 function hideInfoWindow() {
@@ -155,14 +153,30 @@ function resetZoom() {
     }
 }
 
-function updateArticleSelectedMarker(new_marker)
+function updateArticleSelectedMarker(new_marker, story_group)
 {
     if (articleSelectedMarker !== null)
     {
-        articleSelectedMarker.setIcon(defaultIcon);
+        articleSelectedMarker.setIcon(getMarkerImage(defaultIconColour, articleSelectedStoryGroup.urls.length));
     }
     articleSelectedMarker = new_marker;
-    articleSelectedMarker.setIcon(articleSelectedIcon);
+    articleSelectedStoryGroup = story_group;
+    articleSelectedMarker.setIcon(getMarkerImage(articleSelectedIconColour, articleSelectedStoryGroup.urls.length));
+}
+
+function getMarkerImage(colour, count) {
+    let character = '•';
+    if (count !== 1) {
+        character = count.toString();
+    }
+    url = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${character}|${colour}`;
+    if (!(url in markerImages)) {
+        markerImages[url] = new google.maps.MarkerImage(url,
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+    }
+    return markerImages[url];
 }
 
 
@@ -173,15 +187,6 @@ function initMap() {
     });
     infoWindow = new google.maps.InfoWindow({});
     highlightInfoWindow = new google.maps.InfoWindow({});
-
-    defaultIcon = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FF6347",
-        new google.maps.Size(21, 34),
-        new google.maps.Point(0,0),
-        new google.maps.Point(10, 34));
-    articleSelectedIcon = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFD700",
-        new google.maps.Size(21, 34),
-        new google.maps.Point(0,0),
-        new google.maps.Point(10, 34));
 
     refreshMarkersAndInfo();
 

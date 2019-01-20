@@ -5,8 +5,11 @@ from flask_cors import CORS
 
 class AllStoriesResource(Resource):
     def get(self):
-        with open('../crawler/content_by_url.json') as file:
-            return json.load(file), 200
+        with open('../crawler/content_by_url.json') as stories, open('../crawler/story_groups.json') as story_groups:
+            return {
+                'stories': json.load(stories),
+                'story_groups': json.load(story_groups),
+            }, 200
 
 
 def main():
