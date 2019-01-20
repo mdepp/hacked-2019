@@ -1,20 +1,12 @@
 var stories = {};
 var story_groups = [];
 
-$(document).ready(function() {
-    require(['data.json'], function(data) {
-        console.log('Loading data');
-
-        data = JSON.parse(json);
-        stories = data.stories;
-        story_groups = data.story_groups;
-        
-        stories = JSON.parse(stories);
-        story_groups = JSON.parse(story_groups);
-
-        console.log('Loaded data');
-    });
-});
+fetch("data.json")
+  .then(response => response.json())
+  .then(json => {
+      console.log(json);
+      initMap();
+  });
 
 
 var map;
@@ -197,7 +189,10 @@ function getMarkerImage(colour, count) {
 }
 
 
+var count = 0;
 function initMap() {
+    if (++count < 2) return;
+    
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 31.7917, lng: 7.0926},
         zoom: 2
