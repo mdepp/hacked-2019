@@ -4,6 +4,11 @@ var infowindow;
 var markers = null;
 var highlight_marker = null;
 
+var highlightInfoWindow;
+
+var prevPosition;
+var prevZoom;
+
 var popup;
 
 const http = new XMLHttpRequest();
@@ -69,7 +74,7 @@ function showStory(story) {
         lnk.addEventListener('mouseover', function() {
             for (let obj of story.referenced_places) {
                 if (obj.name.toUpperCase() == lnk.innerHTML.toUpperCase()) {
-                    highlightCoordinates(obj.lat, obj.lon);
+                    highlightCoordinates(obj.lat, obj.lon, obj.name);
                     break;
                 }
             }
@@ -80,7 +85,7 @@ function showStory(story) {
     let tags_div = document.getElementById('sidebar-tags');
     let tags_str = '';
     for (let obj of story.referenced_places) {
-        tags_str += `<button class="btn btn-default btn-xs" onmouseover="highlightCoordinates(${obj.lat}, ${obj.lon})" onmouseout="removeHighlight();">${obj.name}</button>`;
+        tags_str += `<button class="btn btn-default btn-xs" onmouseover="highlightCoordinates(${obj.lat}, ${obj.lon}, '${obj.name}')" onmouseout="removeHighlight();">${obj.name}</button>`;
     }
     tags_div.innerHTML = tags_str;
 }
@@ -96,13 +101,26 @@ function hideInfoWindow(info) {
     info.close();
 }
 
-function highlightCoordinates(lat, lon) {
+function highlightCoordinates(lat, lon, label) {
     highlight_marker.setPosition({lat: lat, lng: lon});
     highlight_marker.setMap(map);
+    highlightInfoWindow.setContent(label);
+    highlightInfoWindow.open(map, highlight_marker);
+    movePosition(lat, lon, 3);
 }
 
 function removeHighlight() {
     highlight_marker.setMap(null);
+    highlightInfoWindow.close();
+    resetPosition();
+}
+
+function movePosition(lat, lon) {
+    prevPosition = map.getCenter();
+    map.panTo({lat: lat, lng: lon});
+}
+function resetPosition() {
+    map.panTo(prevPosition);
 }
 
 
@@ -112,7 +130,8 @@ function initMap() {
         zoom: 1
     });
     infoWindow = new google.maps.InfoWindow({});
-    console.log(infoWindow);
+    
+    highlightInfoWindow = new google.maps.InfoWindow({});
 
     refreshMarkersAndInfo();
 
