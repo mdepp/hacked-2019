@@ -60,6 +60,7 @@ function showStory(story) {
     text_div.style.display = 'block';
 
     text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>${story.html}`;
+    text_div.scrollIntoView();
 
     // text_div.innerText = story.content;
     // text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>` + text_div.innerHTML;
