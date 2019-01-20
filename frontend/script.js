@@ -67,7 +67,7 @@ function showStory(marker, story) {
     let tags_str = '';
     for (let obj of story.referenced_places) {
         //tags_str += `<button class="btn btn-default btn-xs" onmouseover="highlightCoordinates(${obj.lat}, ${obj.lon}, '${obj.name}')" onmouseout="removeHighlight();">${obj.name}</button>`;
-        tags_str += `<button class="btn btn-default btn-xs pos-link">${obj.name}</button>`;
+        tags_str += `<div class="pos-link">${obj.name}</div>`;
     }
     tags_div.innerHTML = tags_str;
 

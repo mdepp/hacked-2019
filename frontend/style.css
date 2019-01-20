@@ -47,7 +47,7 @@ html, body {
 
 #sidebar-tags-outer {
     margin: 0;
-    height: 10%;
+    //max-height: 10%;
     border-bottom: ghostwhite solid;
     text-align: center;
 }
@@ -58,9 +58,12 @@ html, body {
     flex-wrap: wrap;
 }
 
-#sidebar-tags button {
+#sidebar-tags div {
     color: #2EB8F6;
-    display: flex;
+    display: inline-block;
+    padding: 8px;
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 
 #default-sidebar-text {
