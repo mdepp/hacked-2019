@@ -27,6 +27,13 @@ def get_content_text(url: str) -> str:
     except NoSuchElementException:
         raise InvalidArticleException(f'Unable to read article at url={url}: no articleBody element!')
 
+def get_content_html(url: str) -> str:
+    driver.get(url)
+    try:
+        return driver.find_element_by_name('articleBody').get_attribute('innerHTML')  # type: str
+    except NoSuchElementException:
+        raise InvalidArticleException(f'Unable to read article at url={url}: no articleBody element!')
+
 
 def get_lat_lon(place_name: str) -> Tuple[float, float]:
     response = requests.get(f'https://nominatim.openstreetmap.org/search?q={place_name}&format=json&polygon=0').json()[0]
@@ -74,6 +81,7 @@ if __name__ == '__main__':
                 try:
                     text_by_url[entry.link] = {
                         'content': get_content_text(entry.link),
+                        'html': get_content_html(entry.link),
                         'headline': entry.title,
                         'blurb': entry.description,
                     }
