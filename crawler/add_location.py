@@ -9,6 +9,7 @@ for url, item in tqdm(data.items()):
     try:
         location = get_location(item['content'])
         item['lat'], item['lon'] = get_lat_lon(location)
+        item['location_string'] = location
     except LocationFormatException:
         pass
 

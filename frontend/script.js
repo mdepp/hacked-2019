@@ -44,7 +44,7 @@ function refreshMarkersAndInfo() {
 
 function showInfoWindow(marker, story, info) {
     console.log(infoWindow);
-    info.setContent(`<h4>${story.headline}</h4><p>${story.blurb}</p>`);
+    info.setContent(`<h4>${story.location_string} -- ${story.headline}</h4><p>${story.blurb}</p>`);
     info.open(map, marker);
 }
 
