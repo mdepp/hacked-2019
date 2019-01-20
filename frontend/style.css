@@ -2,7 +2,6 @@
  * element that contains the map. */
 #map {
     height: 100%;
-    width: 100%;
 }
 /* Optional: Makes the sample page fill the window. */
 html, body {
@@ -84,11 +83,19 @@ html, body {
     font-size: 14px;
 }
 
-.info-window {
-    pointer-events: none;
+.pos-link {
+    color: #2EB8F6;
+    cursor: pointer;
 }
 
-.pos-link {
+#info-window-content {
+    max-height: 200px;
+    -ms-overflow-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card:hover {
     color: #2EB8F6;
     cursor: pointer;
 }

@@ -1,6 +1,6 @@
 var stories = []
 var map;
-var infowindow;
+var infoWindow;
 var markers = null;
 var highlight_marker = null;
 
@@ -8,8 +8,6 @@ var highlightInfoWindow;
 
 var prevPosition = null;
 var prevZoom = null;
-
-var popup;
 
 var defaultIcon = null;
 var articleSelectedIcon = null;
@@ -52,17 +50,8 @@ function refreshMarkersAndInfo() {
     });
     // Add event listeners to open info windows
     for (let i=0; i < stories.length; i++) {
-        markers[i].addListener('mouseover', function() {
-            showInfoWindow(markers[i], stories[i], infoWindow);
-        });
-        markers[i].addListener('mouseout', function() {
-            hideInfoWindow(infoWindow);
-        })
         markers[i].addListener('click', function() {
-            showStory(markers[i], stories[i]);
-            updateArticleSelectedMarker(markers[i]);
-            markers[i].setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(function() {markers[i].setAnimation(null)}, 100);
+            showInfoWindow(i, [0, 1, 2, 3, 4]);
         });
     }
 }
@@ -100,15 +89,35 @@ function showStory(marker, story) {
     }
 }
 
-function showInfoWindow(marker, story, info) {
-    info.setContent(`<div id="info-window-content-marker"></div><h4>${story.location_string} -- ${story.headline}</h4><p>${story.blurb}</p>`);
-    info.open(map, marker);
-    let window = document.getElementById('info-window-content-marker').parentElement.parentElement.parentElement.parentElement;
-    window.classList.add('info-window');
+function storyBtnPressed(marker_index, story_index) {
+    let story = stories[story_index];
+    let marker = markers[marker_index];
+    showStory(marker, story);
+    updateArticleSelectedMarker(marker);
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {marker.setAnimation(null)}, 100);
+    hideInfoWindow();
 }
 
-function hideInfoWindow(info) {
-    info.close();
+function showInfoWindow(marker_index, story_indices) {
+    infoWindowOpen = true;
+    content = `<div id="info-window-content">`;
+    for (let i of story_indices) {
+        content += 
+        `<div class="card" onclick="storyBtnPressed(${marker_index}, ${i})">
+            <div class="card-title"><h4>${stories[i].location_string} -- ${stories[i].headline}</h4></div>
+            <div class="card-text"><p>${stories[i].blurb}</p></div>
+        </div>`;
+    }
+    content += `</div>`;
+    console.log(content);
+    infoWindow.setContent(content);
+    infoWindow.open(map, markers[marker_index]);
+}
+
+function hideInfoWindow() {
+    infoWindowOpen = false;
+    infoWindow.close();
 }
 
 function highlightCoordinates(lat, lon, label) {
@@ -179,5 +188,11 @@ function initMap() {
     highlight_marker = new google.maps.Marker({
         icon: 'libraries/markerclusterer/m1.png',
         zIndex: 999999
+    });
+
+    google.maps.event.addListener(map, 'click', function(e) {
+        if (infoWindowOpen) {
+            hideInfoWindow();
+        }
     });
 }
