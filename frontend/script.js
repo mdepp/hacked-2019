@@ -161,6 +161,7 @@ function initMap() {
 
     highlight_marker = new google.maps.Marker({
         icon: 'libraries/markerclusterer/m1.png',
+        zIndex: 999999
     });
 
     definePopupClass();
