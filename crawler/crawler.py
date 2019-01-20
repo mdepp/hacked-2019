@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from time import time
+from tqdm import tqdm
 import requests
 import re
 import feedparser
@@ -59,22 +60,26 @@ if __name__ == '__main__':
         blacklist = []
 
     with open('feeds', 'r') as file:
-        for feed_url in file.readlines():
-            for entry in feedparser.parse(feed_url).entries:
+        for feed_url in tqdm(file.read().splitlines()):
+            for entry in tqdm(feedparser.parse(feed_url).entries):
                 if entry.link in text_by_url:
-                    print(f'Already cached a copy of {entry.link}')
+                    tqdm.write(f'Already cached a copy of {entry.link}')
                     continue
 
                 if entry.link in blacklist:
-                    print(f'Skipping (previously got parsing error): {entry.link}')
+                    tqdm.write(f'Skipping (previously got parsing error): {entry.link}')
                     continue
 
-                print(f'Reading from {entry.link}')
+                tqdm.write(f'Reading from {entry.link}')
                 try:
-                    text_by_url[entry.link] = {'content': get_content_text(entry.link)}
+                    text_by_url[entry.link] = {
+                        'content': get_content_text(entry.link),
+                        'headline': entry.title,
+                        'blurb': entry.description,
+                    }
                     json.dump(text_by_url, open(cache_file, 'w'))
                 except InvalidArticleException:
-                    print('Parsing error: invalid article format')
+                    tqdm.write('Parsing error: invalid article format')
                     blacklist.append(entry.link)
                     json.dump(blacklist, open(blacklist_file, 'w'))
 
