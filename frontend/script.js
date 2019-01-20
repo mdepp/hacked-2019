@@ -154,8 +154,8 @@ function updateArticleSelectedMarker(new_marker)
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: -34.397, lng: 150.644},
-        zoom: 1
+        center: {lat: 31.7917, lng: 7.0926},
+        zoom: 2
     });
     infoWindow = new google.maps.InfoWindow({});
     highlightInfoWindow = new google.maps.InfoWindow({});
