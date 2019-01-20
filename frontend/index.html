@@ -11,17 +11,27 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script> 
     
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="popup.js"></script>
     <script src="script.js"></script>
     <script src="libraries/markerclusterer/markerclusterer.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASmcQamr1iQSau43ljRPxorWq-RCt5gyA&callback=initMap" async defer></script>
   </head>
   <body>
+    <div id="popup-content">
+      <button class="btn btn-default">Hello</button>>
+    </div>
     <div class="container" id="content">
       <div class="row">
         <div id="map" class="col-8"></div>
         <div class="col-4" id="sidebar">
-          <div id="default-sidebar-text">Click a marker to view an article</div>
-          <div id="sidebar-text"></div>
+          <div id="sidebar-tags-outer">
+            <div id="sidebar-tags" class="d-flex align-items-center justify-content-center">
+            </div>
+          </div>
+          <div id="sidebar-story">
+              <div id="default-sidebar-text">Click a marker to view an article</div>
+              <div id="sidebar-text"></div>
+          </div>
         </div>
     </div>
   </body>
