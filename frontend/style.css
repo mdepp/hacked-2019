@@ -56,11 +56,12 @@ html, body {
 #sidebar-tags {
     width: 100%;
     height: 100%;
+    flex-wrap: wrap;
 }
 
 #sidebar-tags button {
     color: #2EB8F6;
-    display: inline-block;
+    display: flex;
 }
 
 #default-sidebar-text {
