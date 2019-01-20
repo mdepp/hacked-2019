@@ -44,7 +44,11 @@ function refreshMarkersAndInfo() {
 
 function showInfoWindow(marker, story, info) {
     console.log(infoWindow);
-    info.setContent(`<h4>${story.location_string} -- ${story.headline}</h4><p>${story.blurb}</p>`);
+    referenced_names = [];
+    for (let obj of story.referenced_places) {
+        referenced_names.push(obj.name);
+    }
+    info.setContent(`<h4>${story.location_string} -- ${story.headline}</h4><p>${story.blurb}</p><br>${referenced_names}`);
     info.open(map, marker);
 }
 

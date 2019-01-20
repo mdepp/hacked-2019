@@ -11,3 +11,5 @@ dependencies:
   - flask
   - flask-restful
   - flask-cors
+  - nltk
+  - pandas
