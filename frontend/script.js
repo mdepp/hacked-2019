@@ -11,6 +11,10 @@ var prevZoom;
 
 var popup;
 
+var defaultIcon = null;
+var articleSelectedIcon = null;
+var articleSelectedMarker = null;
+
 const http = new XMLHttpRequest();
 const api_url = 'http://localhost:5000/all/';
 http.open('GET', api_url);
@@ -40,7 +44,8 @@ function refreshMarkersAndInfo() {
     markers = stories.map(function(story, i) {
         return new google.maps.Marker({
             position: {lat: story.lat, lng: story.lon},
-            map: map
+            map: map,
+            icon: defaultIcon
         });
     });
     // Add event listeners to open info windows
@@ -53,6 +58,7 @@ function refreshMarkersAndInfo() {
         })
         markers[i].addListener('click', function() {
             showStory(stories[i]);
+            updateArticleSelectedMarker(markers[i]);
         });
     }
 }
@@ -123,6 +129,16 @@ function resetPosition() {
     map.panTo(prevPosition);
 }
 
+function updateArticleSelectedMarker(new_marker)
+{
+    if (articleSelectedMarker !== null)
+    {
+        articleSelectedMarker.setIcon(defaultIcon);
+    }
+    articleSelectedMarker = new_marker;
+    articleSelectedMarker.setIcon(articleSelectedIcon);
+}
+
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -130,8 +146,16 @@ function initMap() {
         zoom: 1
     });
     infoWindow = new google.maps.InfoWindow({});
-    
     highlightInfoWindow = new google.maps.InfoWindow({});
+
+    defaultIcon = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FF6347",
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+    articleSelectedIcon = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFD700",
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
 
     refreshMarkersAndInfo();
 
