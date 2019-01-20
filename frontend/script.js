@@ -2,6 +2,9 @@ var stories = []
 var map;
 var infowindow;
 var markers = null;
+var highlight_marker = null;
+
+var popup;
 
 const http = new XMLHttpRequest();
 const api_url = 'http://localhost:5000/all/';
@@ -16,6 +19,7 @@ http.onreadystatechange=(e)=>{
         if (!response.hasOwnProperty(key)) continue;
         let data = response[key];
         stories.push(data);
+        stories[stories.length-1].url = key;
     }
     refreshMarkersAndInfo();
 }
@@ -36,9 +40,14 @@ function refreshMarkersAndInfo() {
     });
     // Add event listeners to open info windows
     for (let i=0; i < stories.length; i++) {
+        markers[i].addListener('mouseover', function() {
+            showInfoWindow(markers[i], stories[i], infoWindow);
+        });
+        markers[i].addListener('mouseout', function() {
+            hideInfoWindow(infoWindow);
+        })
         markers[i].addListener('click', function() {
             showStory(stories[i]);
-            showInfoWindow(markers[i], stories[i], infoWindow);
         });
     }
 }
@@ -51,18 +60,36 @@ function showStory(story) {
     text_div.style.display = 'block';
 
     text_div.innerText = story.content;
-    text_div.innerHTML = `<h4>${story.headline}</h4>` + text_div.innerHTML;
+    text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>` + text_div.innerHTML;
+
+    let tags_div = document.getElementById('sidebar-tags');
+    tags_str = '';
+    for (let obj of story.referenced_places) {
+        tags_str += `<button class="btn btn-default btn-xs" onmouseover="highlightCoordinates(${obj.lat}, ${obj.lon})" onmouseout="removeHighlight();">${obj.name}</button>`;
+    }
+    tags_div.innerHTML = tags_str;
 }
 
 function showInfoWindow(marker, story, info) {
-    console.log(infoWindow);
-    referenced_names = [];
-    for (let obj of story.referenced_places) {
-        referenced_names.push(obj.name);
-    }
-    info.setContent(`<h4>${story.location_string} -- ${story.headline}</h4><p>${story.blurb}</p><br>${referenced_names}`);
+    info.setContent(`<div id="info-window-content-marker"></div><h4>${story.location_string} -- ${story.headline}</h4><p>${story.blurb}</p>`);
     info.open(map, marker);
+    let window = document.getElementById('info-window-content-marker').parentElement.parentElement.parentElement.parentElement;
+    window.classList.add('info-window');
 }
+
+function hideInfoWindow(info) {
+    info.close();
+}
+
+function highlightCoordinates(lat, lon) {
+    highlight_marker.setPosition({lat: lat, lng: lon});
+    highlight_marker.setMap(map);
+}
+
+function removeHighlight() {
+    highlight_marker.setMap(null);
+}
+
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -73,4 +100,14 @@ function initMap() {
     console.log(infoWindow);
 
     refreshMarkersAndInfo();
+
+    highlight_marker = new google.maps.Marker({
+        icon: 'libraries/markerclusterer/m1.png',
+    });
+
+    definePopupClass();
+    popup = new Popup(
+        new google.maps.LatLng(-33.866, 151.196),
+        document.getElementById('popup-content'));
+    popup.setMap(map);
 }

@@ -27,8 +27,41 @@ html, body {
 
 #content #sidebar {
     margin: 0;
+    padding: 0;
     height: 100%;
+}
+
+#sidebar-story {
+    padding: 10px;
+    height: 90%;
     overflow: scroll;
+}
+
+// https://stackoverflow.com/a/38994837
+#sidebar-story {
+    -ms-overflow-style: none;  // IE 10+
+    overflow: -moz-scrollbars-none;  // Firefox
+}
+#sidebar-story::-webkit-scrollbar { 
+    display: none;  // Safari and Chrome
+}
+
+#sidebar-tags-outer {
+    margin: 0;
+    height: 10%;
+    border-bottom: ghostwhite solid;
+    text-align: center;
+}
+
+#sidebar-tags {
+    width: 100%;
+    height: 100%;
+    flex-wrap: wrap;
+}
+
+#sidebar-tags button {
+    color: #2EB8F6;
+    display: flex;
 }
 
 #default-sidebar-text {
@@ -41,4 +74,16 @@ html, body {
 #sidebar-text {
     height: 100%;
     display: none;
+}
+
+#sidebar-text h4 a {
+    color: black;
+}
+
+#map h4 {
+    font-size: 14px;
+}
+
+.info-window {
+    pointer-events: none;
 }
