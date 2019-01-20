@@ -2,10 +2,43 @@
  * element that contains the map. */
 #map {
     height: 100%;
+    width: 100%;
 }
 /* Optional: Makes the sample page fill the window. */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
+#content {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
+}
+
+#content .row {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#content #sidebar {
+    margin: 0;
+    height: 100%;
+    overflow: scroll;
+}
+
+#default-sidebar-text {
+    text-align: center;
+    transform:translate(0%,100%);
+    height:50%;
+    color:lightgray
+}
+
+#sidebar-text {
+    height: 100%;
+    display: none;
 }

@@ -37,9 +37,21 @@ function refreshMarkersAndInfo() {
     // Add event listeners to open info windows
     for (let i=0; i < stories.length; i++) {
         markers[i].addListener('click', function() {
+            showStory(stories[i]);
             showInfoWindow(markers[i], stories[i], infoWindow);
         });
     }
+}
+
+function showStory(story) {
+    let default_text_div = document.getElementById('default-sidebar-text');
+    let text_div = document.getElementById('sidebar-text');
+    
+    default_text_div.style.display = 'none';
+    text_div.style.display = 'block';
+
+    text_div.innerText = story.content;
+    text_div.innerHTML = `<h4>${story.headline}</h4>` + text_div.innerHTML;
 }
 
 function showInfoWindow(marker, story, info) {
