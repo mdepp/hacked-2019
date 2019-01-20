@@ -59,11 +59,25 @@ function showStory(story) {
     default_text_div.style.display = 'none';
     text_div.style.display = 'block';
 
-    text_div.innerText = story.content;
-    text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>` + text_div.innerHTML;
+    text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>${story.html}`;
+
+    // text_div.innerText = story.content;
+    // text_div.innerHTML = `<h4><a href="${story.url}">${story.headline}</a></h4>` + text_div.innerHTML;
+
+    for (let lnk of document.getElementsByClassName('pos-link')) {
+        lnk.addEventListener('mouseover', function() {
+            for (let obj of story.referenced_places) {
+                if (obj.name.toUpperCase() == lnk.innerHTML.toUpperCase()) {
+                    highlightCoordinates(obj.lat, obj.lon);
+                    break;
+                }
+            }
+        });
+        lnk.addEventListener('mouseout', removeHighlight);
+    }
 
     let tags_div = document.getElementById('sidebar-tags');
-    tags_str = '';
+    let tags_str = '';
     for (let obj of story.referenced_places) {
         tags_str += `<button class="btn btn-default btn-xs" onmouseover="highlightCoordinates(${obj.lat}, ${obj.lon})" onmouseout="removeHighlight();">${obj.name}</button>`;
     }

@@ -87,3 +87,8 @@ html, body {
 .info-window {
     pointer-events: none;
 }
+
+.pos-link {
+    color: #2EB8F6;
+    cursor: pointer;
+}
